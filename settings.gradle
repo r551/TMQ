@@ -1,1 +1,1 @@
-include ':app', ':tmqsdk'
+include ':app', ':tmqsdk', ':tmqsdk_mini_strict'
