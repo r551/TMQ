@@ -1,14 +1,10 @@
-package com.tencent.mig.tmq;
+package com.tencent.mig.tmq.simple;
 
 import com.tencent.mig.tmq.model.IExecuteController;
 import com.tencent.mig.tmq.model.IExecuteControllers;
 import com.tencent.mig.tmq.model.IExpectModes;
 import com.tencent.mig.tmq.model.IFilters;
 import com.tencent.mig.tmq.model.ITmq;
-import com.tencent.mig.tmq.simple.ControllerEnum;
-import com.tencent.mig.tmq.simple.FilterEnum;
-import com.tencent.mig.tmq.simple.ModeEnum;
-import com.tencent.mig.tmq.simple.SimpleTmqMsg;
 
 import java.io.OutputStream;
 

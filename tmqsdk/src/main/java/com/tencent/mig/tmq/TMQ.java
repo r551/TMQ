@@ -1,6 +1,7 @@
 package com.tencent.mig.tmq;
 
 import com.tencent.mig.tmq.model.ITmq;
+import com.tencent.mig.tmq.simple.SimpleTMQ;
 
 import java.io.OutputStream;
 
