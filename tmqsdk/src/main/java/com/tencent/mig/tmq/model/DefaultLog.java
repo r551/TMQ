@@ -5,6 +5,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+/**
+ * 默认的消息记录器实现
+ * @author yoyoqin, kaihuancao
+ *
+ * @param <T> 消息的标识类型
+ * @param <M> 消息类型
+ */
 public class DefaultLog<T, M> implements ILogger<T, M> {
 	static int CAPACITY = 256;
 

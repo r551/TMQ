@@ -101,10 +101,10 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 			os.write(logs[0].getBytes());
 			os.write(System.getProperty("line.separator").getBytes());
 			os.write("====after Filter MsgQueue:====".getBytes());
-			os.write(logs[0].getBytes());
+			os.write(logs[1].getBytes());
 			os.write(System.getProperty("line.separator").getBytes());
 			os.write("====checked MsgQueue:====".getBytes());
-			os.write(logs[0].getBytes());
+			os.write(logs[2].getBytes());
 			os.write(System.getProperty("line.separator").getBytes());
 			os.flush();
 		} catch (Exception e) {

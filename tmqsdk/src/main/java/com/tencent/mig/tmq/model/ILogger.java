@@ -7,7 +7,8 @@ import java.util.Queue;
  * 消息记录日志
  * @author yoyoqin, kaihuancao
  *
- * @param <M> 记录的消息类型
+ * @param <T> 记录的消息类型
+ * @param <M> 记录的消息
  */
 public interface ILogger<T, M> {
 	/**
