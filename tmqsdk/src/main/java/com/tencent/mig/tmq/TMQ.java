@@ -56,7 +56,7 @@ public class TMQ {
     }
 
     /**
-     * 有效的消息序列初始化
+     * 有效的消息类型序列初始化
      * @param msgTypes 有效的消息类型
      */
     public static <T> void iCareWhatType(T...msgTypes) {

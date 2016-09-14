@@ -44,11 +44,7 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 	@Override
 	public boolean report(String tag, Object msg) {
 		synchronized (this) {
-			if (countDownLatch == null) {
-				return true;
-			}
-
-			if (countDownLatch.getCount() == 0) {
+			if (countDownLatch == null || countDownLatch.getCount() == 0) {
 				return true;
 			}
 
