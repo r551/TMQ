@@ -44,7 +44,9 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 	@Override
 	public boolean report(String tag, Object msg) {
 		synchronized (this) {
-			if (countDownLatch == null || countDownLatch.getCount() == 0) {
+//			if (countDownLatch == null || countDownLatch.getCount() == 0) {
+			// 为了兼容排他消息，在countDownLatch.getCount() == 0后继续收消息
+			if (countDownLatch == null) {
 				return true;
 			}
 
@@ -52,7 +54,11 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 
 			if (logger.append(tmqMsg) && mode.match(tmqMsg)) {
 				logger.appendCheckedMsg(tmqMsg);
-				countDownLatch.countDown();
+
+				if (mode.keyMatched(tmqMsg))
+				{
+					countDownLatch.countDown();
+				}
 				return true;
 			}
 			return true;
@@ -89,13 +95,23 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 
 	@Override
 	public void switchFilter(IFilters filter) {
+		// 老的filter要先清理
+		if (this.filter != null)
+		{
+			this.filter.clear();
+		}
 		this.filter = filter.getFilter();
 		this.logger.setFilter(filter.getFilter());
 	}
 
 	@Override
 	public void switchExpectMode(IExpectModes mode) {
-		 this.mode = mode.getMode();
+		// 老的mode要先清理
+		if (this.mode != null)
+		{
+			this.mode.clear();
+		}
+		this.mode = mode.getMode();
 	}
 
 	@Override
@@ -135,6 +151,7 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 	public void clear() {
 		logger.clear();
 		filter.clear();
+		mode.clear();
 	}
 
 	@Override
@@ -149,6 +166,12 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 
 	@Override
 	public void willCare(SimpleTmqMsg msg) {
+		if (null == msg || msg.equals(SimpleTmqMsg.NULL))
+		{
+			// 加入NULL消息后，按照严格匹配模式自然任何消息都不会和这条消息匹配上，就会判定不通过
+			mode.willCare(SimpleTmqMsg.NULL);
+			return;
+		}
 		mode.willCare(msg);
 	}
 

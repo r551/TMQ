@@ -26,7 +26,7 @@ import java.util.Queue;
  * @param <M> 消息类型
  */
 public class DefaultLog<T, M> implements ILogger<T, M> {
-	static int CAPACITY = 256;
+	static int CAPACITY = 1024;
 
 	IFilter<T, M> filter;
 

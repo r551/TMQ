@@ -18,6 +18,7 @@ import com.tencent.mig.tmq.model.IExpectModes;
 
 public enum ModeEnum implements IExpectModes<String, SimpleTmqMsg> {
 	STRICT(new SimpleStrictMode<String, SimpleTmqMsg>()),
+	FLEXIBLE(new SimpleFlexibleMode<String, SimpleTmqMsg>()),
 	;
 
 	private IExpectMode<String, SimpleTmqMsg> mode;

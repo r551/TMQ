@@ -20,6 +20,9 @@ import com.tencent.mig.tmq.model.IFilters;
 import com.tencent.mig.tmq.model.ITmq;
 
 import java.io.OutputStream;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 
@@ -65,9 +68,29 @@ public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 	 */
 	@Override
 	public void iCareWhatMsg(SimpleTmqMsg... tmqMsgList) {
-		controller.reset(tmqMsgList.length);
+		// 增加设置null值为预期不应该收到任何消息的逻辑
+		if (tmqMsgList == null || tmqMsgList.length == 0
+				|| tmqMsgList[0].equals(SimpleTmqMsg.NULL))
+		{
+			controller.reset(0);
+			controller.willCare(null);
+			return;
+		}
+
+		boolean hasNullMsg = false;
 		for (SimpleTmqMsg msg : tmqMsgList)
 		{
+			if (msg == null || SimpleTmqMsg.NULL.equals(msg))
+			{
+				hasNullMsg = true;
+				break;
+			}
+		}
+		int resetSize = hasNullMsg == true ? tmqMsgList.length - 1 : tmqMsgList.length;
+		controller.reset(resetSize);
+		for (SimpleTmqMsg msg : tmqMsgList)
+		{
+			// 单条msg有可能是null，此时语义代表为在null后不应该收到其他通过过滤器的任何消息
 			controller.willCare(msg);
 		}
 	}
@@ -130,5 +153,24 @@ public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 		if (null != foot) {
 			controller.print(foot.concat(System.getProperty("line.separator")));
 		}
+	}
+
+	//=========================================================================
+	// 只有一个容量的BlockingQueue
+	BlockingQueue<Object> tempMsgQueue = new LinkedBlockingQueue<>(1);
+
+	@Override
+	public void offerTempMsg(Object o) {
+		tempMsgQueue.offer(o);
+	}
+
+	@Override
+	public Object pollTempMsg(int timeout) {
+		try {
+			return tempMsgQueue.poll(timeout, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

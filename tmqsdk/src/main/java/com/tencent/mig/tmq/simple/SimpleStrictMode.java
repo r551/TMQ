@@ -20,7 +20,7 @@ import com.tencent.mig.tmq.model.IRetCode;
 public class SimpleStrictMode<T, M> extends DefaultStrictMode<T, M> {
 	@Override
 	public IRetCode check(ILogger<T, M> logger) {
-		if (!expectedQueue.isEmpty()) {
+		if (!(expectedQueue.isEmpty() || expectedQueue.peek().equals(SimpleTmqMsg.NULL))) {
 			return RetCode.NOT_RECEIVED_ALL_EXPECTED_QUEUE_MESSAGE;
 		}
 		if (logger.getAfterFilterQueue().size() != logger.getCheckedQueue().size()) {

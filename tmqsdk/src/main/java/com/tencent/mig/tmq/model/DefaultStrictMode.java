@@ -33,6 +33,11 @@ public abstract class DefaultStrictMode<T, M> implements IExpectMode<T, M> {
 	}
 
 	@Override
+	public void clear() {
+		expectedQueue.clear();
+	}
+
+	@Override
 	public boolean match(M msg) {
 		boolean res = false;
 		if (msg == null) {
@@ -45,5 +50,10 @@ public abstract class DefaultStrictMode<T, M> implements IExpectMode<T, M> {
 			expectedQueue.poll();
 		}
 		return res;
+	}
+
+	@Override
+	public boolean keyMatched(M msg) {
+		return true;
 	}
 }

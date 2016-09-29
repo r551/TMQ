@@ -43,4 +43,9 @@ public class SimpleTmqMsg {
 	public int hashCode() {
 		return tag.hashCode() ^ msg.hashCode();
 	}
+
+	/**
+	 * NULL消息代表预期一条消息都不收，收到一条消息即判定不通过
+	 */
+	public static SimpleTmqMsg NULL = new SimpleTmqMsg("**Null","expect no message");
 }

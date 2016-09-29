@@ -19,7 +19,9 @@ public enum RetCode implements IRetCode {
 	SUCCESS("success"),
 	NOT_RECEIVED_ALL_EXPECTED_QUEUE_MESSAGE("not received all expectedQueue message"),
 	SIZE_OF_MSG_QUEUE_AND_EXPECTED_QUEUE_NOT_EQUALS("size of msgQueue and expectedQueue not equals"),
-	MSG_QUEUE_NOT_MATCHED_EXPECT_EDQUEUE("message sequence in msgQueue not matched message sequence in expectedQueue");
+	MSG_QUEUE_NOT_MATCHED_EXPECT_EDQUEUE("message sequence in msgQueue not matched message sequence in expectedQueue"),
+	RECEIVED_OTHER_MESSAGES_AFTER_EXCLUSIVE_EXPECT_MESSAGE("received other messages After exclusive Expect Flag"),
+	RECEIVED_OTHER_MESSAGES_EXCLUSIVE_EXPECT_MESSAGE("received other messages exclusive Expect Flag");
 
 	private String desc;
 	

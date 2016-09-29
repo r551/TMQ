@@ -113,4 +113,20 @@ public interface ITmq<T, M> {
      * @param text 打印的文本行
      */
     void printText(String head, String foot, String text);
+
+    //=========================================================================
+    /**
+     * 设置临时消息，方便异步生成的需要在用例层使用的对象。
+     * 临时消息非用于结果验证的消息。
+     * 在设置临时消息后，如果未调用pollTempMsg收取该消息，则无法设置新的临时消息
+     * @param o
+     */
+    void offerTempMsg(Object o);
+
+    /**
+     * 获取最近发出的异步临时消息，与offerTempMsg配套使用
+     * @param timeout 超时时间，单位秒
+     * @return 异步设置的临时消息
+     */
+    Object pollTempMsg(int timeout);
 }
