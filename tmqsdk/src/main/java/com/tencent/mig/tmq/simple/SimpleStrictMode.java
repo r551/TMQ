@@ -14,13 +14,25 @@
 package com.tencent.mig.tmq.simple;
 
 import com.tencent.mig.tmq.model.DefaultStrictMode;
+import com.tencent.mig.tmq.model.IExclusiveFlag;
 import com.tencent.mig.tmq.model.ILogger;
 import com.tencent.mig.tmq.model.IRetCode;
 
 public class SimpleStrictMode<T, M> extends DefaultStrictMode<T, M> {
+	/**
+	 * 严格匹配模式最后的check事实上并不需要依据这个方法来判断，如果有预期外的消息早在report的时候就
+	 * 会立刻检查不通过的
+	 * @param msg 送来检查的消息
+	 * @return
+     */
+	@Override
+	public boolean check(M msg) {
+		return expectedQueue.contains(msg);
+	}
+
 	@Override
 	public IRetCode check(ILogger<T, M> logger) {
-		if (!(expectedQueue.isEmpty() || expectedQueue.peek().equals(SimpleTmqMsg.NULL))) {
+		if (!(expectedQueue.isEmpty() || expectedQueue.peek() instanceof IExclusiveFlag)) {
 			return RetCode.NOT_RECEIVED_ALL_EXPECTED_QUEUE_MESSAGE;
 		}
 		if (logger.getAfterFilterQueue().size() != logger.getCheckedQueue().size()) {

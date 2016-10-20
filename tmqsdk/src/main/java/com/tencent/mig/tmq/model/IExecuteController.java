@@ -16,6 +16,7 @@ package com.tencent.mig.tmq.model;
 import java.io.OutputStream;
 
 /**
+ * TODO 应该实现一个默认实现DefaultController放在model中，避免model层的接口之间没有实际的关联
  * 测试执行控制器接口
  * @author yoyoqin
  *

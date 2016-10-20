@@ -45,11 +45,23 @@ public interface IExpectMode<T, M> {
 	 * @return 匹配 true; 不匹配 false
 	 */
 	boolean keyMatched(M msg);
+
+	/**
+	 * 获取当完成接收最后1个关键信息时的通过过滤的所有消息列表
+	 * @return
+     */
+	int getCountWhenCompleteKeyMatch();
 	
 	/**
 	 * 检查记录中的消息，是否符合本预期模式的预期
 	 * @return 返回成功 0, 其他 各种失败情况
-	 * Fixme 实际上check职责不是和match职责一起的，放在一起难以适应复杂的变化，应考虑重构
 	 */
 	IRetCode check(ILogger<T, M> logger);
+
+	/**
+	 * 在完成匹配消息收录后，检查传入的消息是否匹配过
+	 * @param msg 送来检查的消息
+	 * @return true 匹配 false 未匹配过
+     */
+	boolean check(M msg);
 }

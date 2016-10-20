@@ -56,4 +56,8 @@ public abstract class DefaultStrictMode<T, M> implements IExpectMode<T, M> {
 	public boolean keyMatched(M msg) {
 		return true;
 	}
+
+	public int getCountWhenCompleteKeyMatch() {
+		return expectedQueue.size();
+	}
 }

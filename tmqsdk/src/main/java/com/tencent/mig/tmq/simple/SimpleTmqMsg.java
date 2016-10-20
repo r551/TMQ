@@ -13,6 +13,13 @@
  */
 package com.tencent.mig.tmq.simple;
 
+import com.tencent.mig.tmq.model.IExclusiveFlag;
+import com.tencent.mig.tmq.model.IExpectMode;
+import com.tencent.mig.tmq.model.ILogger;
+import com.tencent.mig.tmq.model.IRetCode;
+
+import java.util.List;
+
 public class SimpleTmqMsg {
 	String tag;
 	String msg;
@@ -45,7 +52,59 @@ public class SimpleTmqMsg {
 	}
 
 	/**
-	 * NULL消息代表预期一条消息都不收，收到一条消息即判定不通过
+	 * NULL消息代表预期之外一条消息都不收，收到一条消息即判定不通过
 	 */
-	public static SimpleTmqMsg NULL = new SimpleTmqMsg("**Null","expect no message");
+	public static SimpleTmqMsg NULL = new SimpleExclusiveFlagMsg("**Null","expect no message");
+
+	/**
+	 * KEY_MATCHED_NULL消息代表收完关键消息后，预期之外一条消息都不收
+	 */
+	public static SimpleTmqMsg KEY_MATCHED_NULL = new AfterKeyMatchedExclusiveFlagMsg("**KEY_MATCHED_NULL","expect no message after key matched");
+
+	public static class SimpleExclusiveFlagMsg
+			extends SimpleTmqMsg implements IExclusiveFlag<String, SimpleTmqMsg>
+	{
+		public SimpleExclusiveFlagMsg(String tag, String m) {
+			super(tag, m);
+		}
+
+		@Override
+		public IRetCode exclusiveCheck(IExpectMode<String, SimpleTmqMsg> mode, ILogger<String, SimpleTmqMsg> logger) {
+			List<SimpleTmqMsg> afterFilterQueue = logger.getAfterFilterQueue();
+			// 如果收到其他消息，即判定为不通过
+			for (int i = 0; i < afterFilterQueue.size(); i++)
+			{
+				SimpleTmqMsg m = afterFilterQueue.get(i);
+				if (!mode.check(m))
+				{
+					return RetCode.RECEIVED_OTHER_MESSAGES_EXCLUSIVE_EXPECT_MESSAGE;
+				}
+			}
+			return RetCode.SUCCESS;
+		}
+	}
+
+	public static class AfterKeyMatchedExclusiveFlagMsg
+			extends SimpleTmqMsg implements IExclusiveFlag<String, SimpleTmqMsg>
+	{
+		public AfterKeyMatchedExclusiveFlagMsg(String tag, String m) {
+			super(tag, m);
+		}
+
+		@Override
+		public IRetCode exclusiveCheck(
+				IExpectMode<String, SimpleTmqMsg> mode, ILogger<String, SimpleTmqMsg> logger) {
+			List<SimpleTmqMsg> afterFilterQueue = logger.getAfterFilterQueue();
+			// 在关键消息验证完成后，不应该再收到非关键消息类型的其他消息了
+			for (int i = mode.getCountWhenCompleteKeyMatch(); i < afterFilterQueue.size(); i++)
+			{
+				SimpleTmqMsg m = afterFilterQueue.get(i);
+				if (!mode.check(m))
+				{
+					return RetCode.RECEIVED_OTHER_MESSAGES_AFTER_EXCLUSIVE_EXPECT_MESSAGE;
+				}
+			}
+			return RetCode.SUCCESS;
+		}
+	}
 }

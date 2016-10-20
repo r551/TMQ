@@ -13,6 +13,7 @@
  */
 package com.tencent.mig.tmq.simple;
 
+import com.tencent.mig.tmq.model.IExclusiveFlag;
 import com.tencent.mig.tmq.model.IExecuteController;
 import com.tencent.mig.tmq.model.IExecuteControllers;
 import com.tencent.mig.tmq.model.IExpectModes;
@@ -77,18 +78,20 @@ public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 			return;
 		}
 
-		boolean hasNullMsg = false;
-		for (SimpleTmqMsg msg : tmqMsgList)
+		boolean hasExclusiveMsg = false;
+		int indexBeforeExclusiveFlag = 0;
+		for (indexBeforeExclusiveFlag = 0; indexBeforeExclusiveFlag < tmqMsgList.length; indexBeforeExclusiveFlag++)
 		{
-			if (msg == null || SimpleTmqMsg.NULL.equals(msg))
+			SimpleTmqMsg msg = tmqMsgList[indexBeforeExclusiveFlag];
+			if (msg == null || msg instanceof IExclusiveFlag)
 			{
-				hasNullMsg = true;
+				hasExclusiveMsg = true;
 				break;
 			}
 		}
-		int resetSize = hasNullMsg == true ? tmqMsgList.length - 1 : tmqMsgList.length;
-		controller.reset(resetSize);
-		for (SimpleTmqMsg msg : tmqMsgList)
+
+		controller.reset(indexBeforeExclusiveFlag);
+		for (SimpleTmqMsg msg : tmqMsgList) // 这个地方加倒是可以都加上
 		{
 			// 单条msg有可能是null，此时语义代表为在null后不应该收到其他通过过滤器的任何消息
 			controller.willCare(msg);

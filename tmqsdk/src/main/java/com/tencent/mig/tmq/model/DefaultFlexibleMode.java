@@ -13,8 +13,6 @@
  */
 package com.tencent.mig.tmq.model;
 
-import com.tencent.mig.tmq.simple.SimpleTmqMsg;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,8 +32,10 @@ public abstract class DefaultFlexibleMode<T, M> implements IExpectMode<T, M> {
 
 	// 预期消息序列
 	protected Map<M, AtomicInteger> expectedMap = new HashMap();
-	protected int needValidBeforeNullMsg = 0; // 在匹配到排他预期之前，还应该收到多少条关键关注消息
-	protected int indexWhenCompleteKeyMatch = 0; // 关键消息都匹配后，此时收到的过滤后消息个数
+	// 在匹配到排他预期之前，还应该收到多少条关键关注消息，用于收完整关键消息后再启动排他的match模式
+	protected int needValidBeforeNullMsg = 0;
+	// 关键消息都匹配后，此时收到的过滤后消息个数
+	protected int countWhenCompleteKeyMatch = 0;
 	protected boolean expectNullFlag = false;
 
 	/**
@@ -54,7 +54,7 @@ public abstract class DefaultFlexibleMode<T, M> implements IExpectMode<T, M> {
 		{
 			count = expectedMap.get(msg);
 		}
-		if (msg.equals(SimpleTmqMsg.NULL))
+		if (msg instanceof IExclusiveFlag)
 		{
 			expectNullFlag = true;
 		}
@@ -67,8 +67,9 @@ public abstract class DefaultFlexibleMode<T, M> implements IExpectMode<T, M> {
 
 	@Override
 	public void clear() {
+		expectNullFlag = false;
 		needValidBeforeNullMsg = 0;
-		indexWhenCompleteKeyMatch = 0;
+		countWhenCompleteKeyMatch = 0;
 		expectedMap.clear();
 	}
 
@@ -78,7 +79,7 @@ public abstract class DefaultFlexibleMode<T, M> implements IExpectMode<T, M> {
 		// 注意这个判断应该在keyMatched方法中indexWhenCompleteKeyMatch--逻辑之前
 		if (matched && needValidBeforeNullMsg > 0)
 		{
-			indexWhenCompleteKeyMatch++;
+			countWhenCompleteKeyMatch++;
 		}
 		return matched;
 	}
@@ -97,5 +98,9 @@ public abstract class DefaultFlexibleMode<T, M> implements IExpectMode<T, M> {
 			needValidBeforeNullMsg--;
 		}
 		return countValue >= 0 ? true : false;
+	}
+
+	public int getCountWhenCompleteKeyMatch() {
+		return countWhenCompleteKeyMatch;
 	}
 }
