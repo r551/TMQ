@@ -23,8 +23,8 @@ public class MixedModeTest extends BaseTest {
             public void run() {
                 TMQ.report("UnitTest", "1");
             }
-        }, 1000);
-        TMQ.await(3);
+        }, ASYNC_TASK_TIMEOUT);
+        TMQ.await(AWAIT_TIMEOUT);
         assertTrue(TMQ.check());
 
         // 切换到松散模式，不在乎顺序
@@ -54,8 +54,8 @@ public class MixedModeTest extends BaseTest {
             public void run() {
                 TMQ.report("UnitTest", "1");
             }
-        }, 1000);
-        TMQ.await(3);
+        }, ASYNC_TASK_TIMEOUT);
+        TMQ.await(AWAIT_TIMEOUT);
         assertTrue(TMQ.check());
 
         // 切换到松散模式，不在乎顺序

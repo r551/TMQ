@@ -21,8 +21,8 @@ public class StrictModeTest extends BaseTest {
             public void run() {
                 TMQ.report("UnitTest", "1");
             }
-        }, 1000);
-        TMQ.await(3);
+        }, ASYNC_TASK_TIMEOUT);
+        TMQ.await(AWAIT_TIMEOUT);
         assertTrue(TMQ.check());
     }
 
@@ -41,8 +41,8 @@ public class StrictModeTest extends BaseTest {
                 TMQ.report("UnitTest2", "1");
                 TMQ.report("UnitTest2", "2");
             }
-        }, 1000);
-        TMQ.await(3);
+        }, ASYNC_TASK_TIMEOUT);
+        TMQ.await(AWAIT_TIMEOUT);
         assertTrue(TMQ.check());
     }
 
@@ -59,9 +59,9 @@ public class StrictModeTest extends BaseTest {
                 TMQ.report("UnitTest2", "1");
                 TMQ.report("UnitTest2", "2");
             }
-        }, 1000);
-        TimeUnit.SECONDS.sleep(3);
-        TMQ.await(3);
+        }, ASYNC_TASK_TIMEOUT);
+        TimeUnit.SECONDS.sleep(WAIT_TIMEOUT);
+        TMQ.await(AWAIT_TIMEOUT);
         assertFalse(TMQ.check());
 
         // 预期收不到任何消息
@@ -74,21 +74,21 @@ public class StrictModeTest extends BaseTest {
                 TMQ.report("UnitTest2", "1");
                 TMQ.report("UnitTest2", "2");
             }
-        }, 1000);
-        TimeUnit.SECONDS.sleep(3);
-        TMQ.await(3);
+        }, ASYNC_TASK_TIMEOUT);
+        TimeUnit.SECONDS.sleep(WAIT_TIMEOUT);
+        TMQ.await(AWAIT_TIMEOUT);
         assertFalse(TMQ.check());
 
         // 预期收不到任何消息
         TMQ.iCareWhatMsg(SimpleTmqMsg.NULL);
-        TimeUnit.SECONDS.sleep(3);
-        TMQ.await(3);
+        TimeUnit.SECONDS.sleep(WAIT_TIMEOUT);
+        TMQ.await(AWAIT_TIMEOUT);
         assertTrue(TMQ.check());
 
         // 预期收不到任何消息
         TMQ.iCareWhatMsg(SimpleTmqMsg.KEY_MATCHED_NULL);
-        TimeUnit.SECONDS.sleep(3);
-        TMQ.await(3);
+        TimeUnit.SECONDS.sleep(WAIT_TIMEOUT);
+        TMQ.await(AWAIT_TIMEOUT);
         assertTrue(TMQ.check());
     }
 
@@ -109,8 +109,8 @@ public class StrictModeTest extends BaseTest {
                 // 第4个消息不在预期序列
                 TMQ.report("UnitTest2", "3");
             }
-        }, 1000);
-        TMQ.await(3);
+        }, ASYNC_TASK_TIMEOUT);
+        TMQ.await(AWAIT_TIMEOUT);
         assertFalse(TMQ.check());
 
         // 收到的消息顺序与预期不符
@@ -127,8 +127,8 @@ public class StrictModeTest extends BaseTest {
                 TMQ.report("UnitTest2", "2");
                 TMQ.report("UnitTest2", "1");
             }
-        }, 1000);
-        TMQ.await(3);
+        }, ASYNC_TASK_TIMEOUT);
+        TMQ.await(AWAIT_TIMEOUT);
         assertFalse(TMQ.check());
     }
 
@@ -160,9 +160,8 @@ public class StrictModeTest extends BaseTest {
                 // 不关注的消息
                 TMQ.report("UnitTest3", "2");
             }
-        }, 1000);
-        TMQ.await(3);
-//        TimeUnit.SECONDS.sleep(3);
+        }, ASYNC_TASK_TIMEOUT);
+        TMQ.await(AWAIT_TIMEOUT);
         assertTrue(TMQ.check());
     }
 }
