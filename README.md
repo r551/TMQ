@@ -508,9 +508,6 @@ public class FlexibleModeTest extends BaseTest {
      * 预期消息的最后填SimpleTmqMsg.KEY_MATCHED_NULL，语义为在收全预期的消息后，不会再收到任何非预期消息（收全预期的消息之前允许），符合则TMQ校验通过；
      * 预期消息的最后填SimpleTmqMsg.KEY_MATCHED_NULL，语义为在收全预期的消息后，不会再收到任何非预期消息（收全预期的消息之前允许），否则TMQ校验不过；
      */
-    /**
-     * 另一种排他语义，在收全预期的消息后，不再接受其他消息，收全之前可以
-     */
     @Test
     public void testFlexibleMoreMessageKeyMatchedExclusive() throws Exception {
         TMQ.switchExpectMode(ModeEnum.FLEXIBLE);
