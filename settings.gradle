@@ -1,1 +1,1 @@
-include ':fakeapp', ':tmqsdk', ':tmqsdk_mini_strict'
+include':tmqsdk', ':tmqsdk_mini_strict'
