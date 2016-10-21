@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 
 /**
- * Created by yoyoqin on 2016/10/20.
+ * 测试父类
  */
 public class BaseTest {
     public static int ASYNC_TASK_TIMEOUT = 1000; // milliseconds

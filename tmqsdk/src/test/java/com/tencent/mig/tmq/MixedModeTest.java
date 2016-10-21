@@ -11,8 +11,14 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertTrue;
 
+/**
+ * 严格模式和松散模式混合测试
+ */
 public class MixedModeTest extends BaseTest {
-
+    /**
+     * 在同一个测试用例中支持预期模式的切换
+     * @throws Exception
+     */
     @Test
     public void testMixedMessage() throws Exception {
         // 严格模式

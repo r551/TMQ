@@ -10,8 +10,14 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
+/**
+ * 严格模式测试
+ */
 public class StrictModeTest extends BaseTest {
 
+    /**
+     * 预期收到1条指定消息，实际发出符合条件的1条消息，TMQ校验通过。
+     */
     @Test
     public void testStrictOneMessage() throws Exception {
         TMQ.iCareWhatMsg(new SimpleTmqMsg("UnitTest", "1"));
@@ -26,6 +32,9 @@ public class StrictModeTest extends BaseTest {
         assertTrue(TMQ.check());
     }
 
+    /**
+     * 预期收到n条指定消息，实际发出符合条件的n条消息且顺序与预期一致，TMQ校验通过。
+     */
     @Test
     public void testStrictMoreMessage() throws Exception {
         TMQ.iCareWhatMsg(new SimpleTmqMsg("UnitTest", "1"),
@@ -46,6 +55,12 @@ public class StrictModeTest extends BaseTest {
         assertTrue(TMQ.check());
     }
 
+    /**
+     * 预期消息只填null，语义为预期不会收到任何消息，如有收到任意条消息，TMQ校验不过；
+     * 预期消息只填SimpleTmqMsg.NULL，语义与只填null一致，如有收到任意条消息，TMQ校验不过；
+     * 预期消息只填SimpleTmqMsg.NULL，如未收到任何消息，TMQ校验通过；
+     * 预期消息只填SimpleTmqMsg.KEY_MATCHED_NULL，如未收到任何消息，TMQ校验通过；
+     */
     @Test
     public void testStrictZeroMessageExclusive() throws Exception {
         // 预期收不到任何消息
@@ -92,6 +107,10 @@ public class StrictModeTest extends BaseTest {
         assertTrue(TMQ.check());
     }
 
+    /**
+     * 预期收到n条指定消息，实际收到1条不符合预期的消息，TMQ校验不过；
+     * 预期收到n条指定消息，实际收到的消息顺序与预期不符，TMQ校验不过；
+     */
     @Test
     public void testStrictMoreMessageExclusive() throws Exception {
         // 预期收不到任何非预期消息

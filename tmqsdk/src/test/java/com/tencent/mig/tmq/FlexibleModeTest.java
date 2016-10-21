@@ -13,8 +13,14 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * 松散模式测试
+ */
 public class FlexibleModeTest extends BaseTest {
-
+    /**
+     * 预期收到1条指定消息，实际发出符合条件的1条消息，TMQ校验通过；
+     * 预期收到1条指定消息，实际发出符合条件的n条消息，TMQ校验通过。
+     */
     @Test
     public void testFlexibleOneMessage() throws Exception {
         TMQ.switchExpectMode(ModeEnum.FLEXIBLE);
@@ -47,6 +53,13 @@ public class FlexibleModeTest extends BaseTest {
         assertTrue(TMQ.check());
     }
 
+    /**
+     * 预期收到n条指定消息，实际发出符合条件的n条消息，TMQ校验通过；
+     * 预期收到n条指定消息，其中一条消息预期至少收到2次，实际发出符合条件的n+m条消息，TMQ校验通；
+     * 预期收到n条指定消息，实际发出符合条件的n条消息，顺序不按预期顺序,TMQ校验通过；
+     * 松散模式默认允许收到其他类型的消息，只要预期满足，不管是否有收到多余消息，TMQ校验通过；
+     * 松散模式其实是只有预期消息没有全部收到指定条数时才会校验不过。
+     */
     @Test
     public void testFlexibleMoreMessage() throws Exception {
         TMQ.switchExpectMode(ModeEnum.FLEXIBLE);
@@ -135,7 +148,7 @@ public class FlexibleModeTest extends BaseTest {
         TimeUnit.SECONDS.sleep(WAIT_TIMEOUT);
         assertTrue(TMQ.check());
 
-        // 松散模式其实是只有预期消息没有全部至少收到1条时会校验不过
+        // 松散模式其实是只有预期消息没有全部收到指定条数时才会校验不过
         TMQ.iCareWhatMsg(new SimpleTmqMsg("UnitTest", "1"),
                 new SimpleTmqMsg("UnitTest", "2")
                 , new SimpleTmqMsg("UnitTest1", "1")
@@ -154,10 +167,16 @@ public class FlexibleModeTest extends BaseTest {
         assertFalse(TMQ.check());
     }
 
+    /**
+     * 预期消息只填null，语义为预期不会收到任何消息，如有收到任意条消息，TMQ校验不过；
+     * 预期消息只填SimpleTmqMsg.NULL，语义为预期不会收到任何消息，如有收到任意条消息，TMQ校验不过；
+     * 预期消息只填SimpleTmqMsg.NULL，语义为预期不会收到任何消息，如未收到任意条消息，TMQ校验通过；
+     * 预期消息只填SimpleTmqMsg.KEY_MATCHED_NULL，和SimpleTmqMsg.NULL效果一样，如未收到任意条消息，TMQ校验通过。
+     */
     @Test
     public void testFlexibleZeroMessageExclusive() throws Exception {
         TMQ.switchExpectMode(ModeEnum.FLEXIBLE);
-        // 预期收不到任何消息
+        // 预期不会收到任何消息
         TMQ.iCareWhatMsg(null);
         Timer timer = new Timer();
         timer.schedule(new TimerTask(){
@@ -201,10 +220,16 @@ public class FlexibleModeTest extends BaseTest {
         assertTrue(TMQ.check());
     }
 
+    /**
+     * SimpleTmqMsg.NULL的排他语义测试
+     *
+     * 预期消息的最后填SimpleTmqMsg.NULL，语义为预期不会收到任何非预期消息，如有收到预期外的消息，TMQ校验不过；
+     * 预期消息的最后填SimpleTmqMsg.NULL，语义为预期不会收到任何非预期消息，如收全预期的消息且未收到预期外的消息，TMQ校验通过。
+     */
     @Test
     public void testFlexibleMoreMessageExclusive() throws Exception {
         TMQ.switchExpectMode(ModeEnum.FLEXIBLE);
-        // 预期收不到任何非预期消息
+        // 预期不会收到任何非预期消息
         TMQ.iCareWhatMsg(new SimpleTmqMsg("UnitTest", "1"),
                 new SimpleTmqMsg("UnitTest", "2")
                 , new SimpleTmqMsg("UnitTest1", "1")
@@ -251,8 +276,13 @@ public class FlexibleModeTest extends BaseTest {
     }
 
     /**
+     * SimpleTmqMsg.KEY_MATCHED_NULL的排他语义测试
+     *
+     * 预期消息的最后填SimpleTmqMsg.KEY_MATCHED_NULL，语义为在收全预期的消息后，不会再收到任何非预期消息（收全预期的消息之前允许），符合则TMQ校验通过；
+     * 预期消息的最后填SimpleTmqMsg.KEY_MATCHED_NULL，语义为在收全预期的消息后，不会再收到任何非预期消息（收全预期的消息之前允许），否则TMQ校验不过；
+     */
+    /**
      * 另一种排他语义，在收全预期的消息后，不再接受其他消息，收全之前可以
-     * @throws Exception
      */
     @Test
     public void testFlexibleMoreMessageKeyMatchedExclusive() throws Exception {
@@ -306,8 +336,9 @@ public class FlexibleModeTest extends BaseTest {
     }
 
     /**
-     * 设置只关注的消息类型后，收到的其他类型消息不再作为判定依据
-     * @throws Exception
+     * 设置只关注的消息类型后（TMQ.iCareWhatType），收到的其他类型消息不再作为判定依据
+     *
+     * 在 TMQ.iCareWhatMsg方法后用TMQ.iCareWhatType设置只关注的消息类型，那么所有规则只在关注的消息类型范围内有效。
      */
     @Test
     public void testFlexibleMoreMessageFilter() throws Exception {

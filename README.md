@@ -63,12 +63,16 @@ if (BuildConfig.DEBUG)
     // 在这里对前面设置关注的消息进行序列的严格检查
     Assert.assertTrue(TMQ.check());
 ```
-#### 框架扩展方法
-请参考tmqsdk工程下的simple包自定义扩展模块。
-#### 使用方法详解
+#### 使用详解
 ```java
+/**
+ * 严格模式测试
+ */
 public class StrictModeTest extends BaseTest {
 
+    /**
+     * 预期收到1条指定消息，实际发出符合条件的1条消息，TMQ校验通过。
+     */
     @Test
     public void testStrictOneMessage() throws Exception {
         TMQ.iCareWhatMsg(new SimpleTmqMsg("UnitTest", "1"));
@@ -83,6 +87,9 @@ public class StrictModeTest extends BaseTest {
         assertTrue(TMQ.check());
     }
 
+    /**
+     * 预期收到n条指定消息，实际发出符合条件的n条消息且顺序与预期一致，TMQ校验通过。
+     */
     @Test
     public void testStrictMoreMessage() throws Exception {
         TMQ.iCareWhatMsg(new SimpleTmqMsg("UnitTest", "1"),
@@ -103,6 +110,12 @@ public class StrictModeTest extends BaseTest {
         assertTrue(TMQ.check());
     }
 
+    /**
+     * 预期消息只填null，语义为预期不会收到任何消息，如有收到任意条消息，TMQ校验不过；
+     * 预期消息只填SimpleTmqMsg.NULL，语义与只填null一致，如有收到任意条消息，TMQ校验不过；
+     * 预期消息只填SimpleTmqMsg.NULL，如未收到任何消息，TMQ校验通过；
+     * 预期消息只填SimpleTmqMsg.KEY_MATCHED_NULL，如未收到任何消息，TMQ校验通过；
+     */
     @Test
     public void testStrictZeroMessageExclusive() throws Exception {
         // 预期收不到任何消息
@@ -149,6 +162,10 @@ public class StrictModeTest extends BaseTest {
         assertTrue(TMQ.check());
     }
 
+    /**
+     * 预期收到n条指定消息，实际收到1条不符合预期的消息，TMQ校验不过；
+     * 预期收到n条指定消息，实际收到的消息顺序与预期不符，TMQ校验不过；
+     */
     @Test
     public void testStrictMoreMessageExclusive() throws Exception {
         // 预期收不到任何非预期消息
@@ -223,8 +240,14 @@ public class StrictModeTest extends BaseTest {
     }
 }
 
+/**
+ * 松散模式测试
+ */
 public class FlexibleModeTest extends BaseTest {
-
+    /**
+     * 预期收到1条指定消息，实际发出符合条件的1条消息，TMQ校验通过；
+     * 预期收到1条指定消息，实际发出符合条件的n条消息，TMQ校验通过。
+     */
     @Test
     public void testFlexibleOneMessage() throws Exception {
         TMQ.switchExpectMode(ModeEnum.FLEXIBLE);
@@ -257,6 +280,13 @@ public class FlexibleModeTest extends BaseTest {
         assertTrue(TMQ.check());
     }
 
+    /**
+     * 预期收到n条指定消息，实际发出符合条件的n条消息，TMQ校验通过；
+     * 预期收到n条指定消息，其中一条消息预期至少收到2次，实际发出符合条件的n+m条消息，TMQ校验通；
+     * 预期收到n条指定消息，实际发出符合条件的n条消息，顺序不按预期顺序,TMQ校验通过；
+     * 松散模式默认允许收到其他类型的消息，只要预期满足，不管是否有收到多余消息，TMQ校验通过；
+     * 松散模式其实是只有预期消息没有全部收到指定条数时才会校验不过。
+     */
     @Test
     public void testFlexibleMoreMessage() throws Exception {
         TMQ.switchExpectMode(ModeEnum.FLEXIBLE);
@@ -345,7 +375,7 @@ public class FlexibleModeTest extends BaseTest {
         TimeUnit.SECONDS.sleep(WAIT_TIMEOUT);
         assertTrue(TMQ.check());
 
-        // 松散模式其实是只有预期消息没有全部至少收到1条时会校验不过
+        // 松散模式其实是只有预期消息没有全部收到指定条数时才会校验不过
         TMQ.iCareWhatMsg(new SimpleTmqMsg("UnitTest", "1"),
                 new SimpleTmqMsg("UnitTest", "2")
                 , new SimpleTmqMsg("UnitTest1", "1")
@@ -364,10 +394,16 @@ public class FlexibleModeTest extends BaseTest {
         assertFalse(TMQ.check());
     }
 
+    /**
+     * 预期消息只填null，语义为预期不会收到任何消息，如有收到任意条消息，TMQ校验不过；
+     * 预期消息只填SimpleTmqMsg.NULL，语义为预期不会收到任何消息，如有收到任意条消息，TMQ校验不过；
+     * 预期消息只填SimpleTmqMsg.NULL，语义为预期不会收到任何消息，如未收到任意条消息，TMQ校验通过；
+     * 预期消息只填SimpleTmqMsg.KEY_MATCHED_NULL，和SimpleTmqMsg.NULL效果一样，如未收到任意条消息，TMQ校验通过。
+     */
     @Test
     public void testFlexibleZeroMessageExclusive() throws Exception {
         TMQ.switchExpectMode(ModeEnum.FLEXIBLE);
-        // 预期收不到任何消息
+        // 预期不会收到任何消息
         TMQ.iCareWhatMsg(null);
         Timer timer = new Timer();
         timer.schedule(new TimerTask(){
@@ -411,10 +447,16 @@ public class FlexibleModeTest extends BaseTest {
         assertTrue(TMQ.check());
     }
 
+    /**
+     * SimpleTmqMsg.NULL的排他语义测试
+     *
+     * 预期消息的最后填SimpleTmqMsg.NULL，语义为预期不会收到任何非预期消息，如有收到预期外的消息，TMQ校验不过；
+     * 预期消息的最后填SimpleTmqMsg.NULL，语义为预期不会收到任何非预期消息，如收全预期的消息且未收到预期外的消息，TMQ校验通过。
+     */
     @Test
     public void testFlexibleMoreMessageExclusive() throws Exception {
         TMQ.switchExpectMode(ModeEnum.FLEXIBLE);
-        // 预期收不到任何非预期消息
+        // 预期不会收到任何非预期消息
         TMQ.iCareWhatMsg(new SimpleTmqMsg("UnitTest", "1"),
                 new SimpleTmqMsg("UnitTest", "2")
                 , new SimpleTmqMsg("UnitTest1", "1")
@@ -461,8 +503,13 @@ public class FlexibleModeTest extends BaseTest {
     }
 
     /**
+     * SimpleTmqMsg.KEY_MATCHED_NULL的排他语义测试
+     *
+     * 预期消息的最后填SimpleTmqMsg.KEY_MATCHED_NULL，语义为在收全预期的消息后，不会再收到任何非预期消息（收全预期的消息之前允许），符合则TMQ校验通过；
+     * 预期消息的最后填SimpleTmqMsg.KEY_MATCHED_NULL，语义为在收全预期的消息后，不会再收到任何非预期消息（收全预期的消息之前允许），否则TMQ校验不过；
+     */
+    /**
      * 另一种排他语义，在收全预期的消息后，不再接受其他消息，收全之前可以
-     * @throws Exception
      */
     @Test
     public void testFlexibleMoreMessageKeyMatchedExclusive() throws Exception {
@@ -516,8 +563,9 @@ public class FlexibleModeTest extends BaseTest {
     }
 
     /**
-     * 设置只关注的消息类型后，收到的其他类型消息不再作为判定依据
-     * @throws Exception
+     * 设置只关注的消息类型后（TMQ.iCareWhatType），收到的其他类型消息不再作为判定依据
+     *
+     * 在 TMQ.iCareWhatMsg方法后用TMQ.iCareWhatType设置只关注的消息类型，那么所有规则只在关注的消息类型范围内有效。
      */
     @Test
     public void testFlexibleMoreMessageFilter() throws Exception {
@@ -582,8 +630,14 @@ public class FlexibleModeTest extends BaseTest {
     }
 }
 
+/**
+ * 严格模式和松散模式混合测试
+ */
 public class MixedModeTest extends BaseTest {
-
+    /**
+     * 在同一个测试用例中支持预期模式的切换
+     * @throws Exception
+     */
     @Test
     public void testMixedMessage() throws Exception {
         // 严格模式
@@ -647,6 +701,29 @@ public class MixedModeTest extends BaseTest {
         TMQ.await(AWAIT_TIMEOUT);
         TimeUnit.SECONDS.sleep(WAIT_TIMEOUT);
         assertTrue(TMQ.check());
+    }
+}
+
+/**
+ * 测试父类
+ */
+public class BaseTest {
+    public static int ASYNC_TASK_TIMEOUT = 1000; // milliseconds
+    public static int AWAIT_TIMEOUT = 3; // seconds
+    public static int WAIT_TIMEOUT = 3; // seconds
+
+    @Before
+    public void setUp()
+    {
+        TMQ.setOutStream(System.out);
+        TMQ.printText("start..");
+    }
+
+    @After
+    public void tearDown()
+    {
+        TMQ.setOutStream(System.out);
+        TMQ.printText("end.");
     }
 }
 ```
