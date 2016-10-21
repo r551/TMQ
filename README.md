@@ -19,8 +19,8 @@ dependencies {
      * 所以这里配置为release版本编译方式为编译依赖但打包不包含的releaseProvided，
      * 为了在release版本编译时不出错，请在被测代码中调用TMQ的地方用if (BuildConfig.DEBUG)语句包裹
      */
-    debugCompile 'com.tencent.mig.tmq:tmqsdk:0.2.3'
-    releaseProvided  'com.tencent.mig.tmq:tmqsdk:0.2.3'
+    debugCompile 'com.tencent.mig.tmq:tmqsdk:0.2.4'
+    releaseProvided  'com.tencent.mig.tmq:tmqsdk:0.2.4'
 }
 ```
 ##### DEMO
