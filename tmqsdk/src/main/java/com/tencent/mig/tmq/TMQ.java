@@ -169,4 +169,15 @@ public class TMQ {
     public static Object pollTempMsg(int timeout) {
         return tmqInstance.pollTempMsg(timeout);
     }
+
+    /**
+     * 清理临时消息。
+     *
+     * 如果用例执行fail，队列中有消息未被消化，
+     * 会导致后面用例pollTempMsg瞬间拉到前一个用例未被消耗的消息，不符合预期，
+     * 所以这里提供clear方法，稳妥起见建议用户在@After中调用该方法清理一下。
+     */
+    public static void clearTempMsg() {
+        tmqInstance.clearTempMsg();
+    }
 }

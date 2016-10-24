@@ -164,8 +164,6 @@ public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 
 	@Override
 	public void offerTempMsg(Object o) {
-		// 加入之前先清理，避免用例执行fail，导致下个offer失败的情况
-		tempMsgQueue.clear();
 		tempMsgQueue.offer(o);
 	}
 
@@ -177,5 +175,10 @@ public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public void clearTempMsg() {
+		tempMsgQueue.clear();
 	}
 }
