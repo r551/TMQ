@@ -33,6 +33,12 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 	private IFilter<String, SimpleTmqMsg> filter;
 	private CountDownLatch countDownLatch = null;
 
+	/*
+	 * 在reset后，是否已通过一次willCare方法触发启动。在reset方法中应将其置为false
+	 * TODO 后续若Controller的状态变复杂，应按状态模式重构
+	 */
+	private boolean state;
+
 	private OutputStream os;
 	private boolean outFlag;
 
@@ -46,7 +52,9 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 		synchronized (this) {
 //			if (countDownLatch == null || countDownLatch.getCount() == 0) {
 			// 为了兼容排他消息，在countDownLatch.getCount() == 0后继续收消息
-			if (countDownLatch == null) {
+//			if (countDownLatch == null)
+			// 上次的修改，会造成reset后，如有report上报,会造成提前工作，直接空指针异常，所以这里引入state状态
+			if (! state) {
 				return true;
 			}
 
@@ -166,6 +174,7 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 
 	@Override
 	public void willCare(SimpleTmqMsg msg) {
+		state = true;
 		if (null == msg || msg.equals(SimpleTmqMsg.NULL))
 		{
 			// 加入NULL消息后，按照严格匹配模式自然任何消息都不会和这条消息匹配上，就会判定不通过
@@ -187,6 +196,7 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 
 	@Override
 	public void reset(int countInit) {
+		state = false;
 		clear();
 		countDownLatch = new CountDownLatch(countInit);
 	}

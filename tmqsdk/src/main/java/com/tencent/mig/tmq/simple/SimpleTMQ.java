@@ -116,7 +116,7 @@ public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 	}
 
 	public void reset() {
-		controller.clear();
+		controller.reset(0);
 	}
 
 	/**

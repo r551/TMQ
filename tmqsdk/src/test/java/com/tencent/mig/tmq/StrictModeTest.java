@@ -1,19 +1,27 @@
 package com.tencent.mig.tmq;
 
+import com.tencent.mig.tmq.simple.ModeEnum;
 import com.tencent.mig.tmq.simple.SimpleTmqMsg;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * 严格模式测试
  */
 public class StrictModeTest extends BaseTest {
+    @Before
+    public void setUp()
+    {
+        TMQ.switchExpectMode(ModeEnum.STRICT);
+    }
 
     /**
      * 预期收到1条指定消息，实际发出符合条件的1条消息，TMQ校验通过。
@@ -178,6 +186,23 @@ public class StrictModeTest extends BaseTest {
                 TMQ.report("UnitTest2", "2");
                 // 不关注的消息
                 TMQ.report("UnitTest3", "2");
+            }
+        }, ASYNC_TASK_TIMEOUT);
+        TMQ.await(AWAIT_TIMEOUT);
+        assertTrue(TMQ.check());
+    }
+
+    @Test
+    public void testStrictMessagePre() throws Exception {
+        // 提前报告的消息
+        TMQ.report("UnitTest", "1");
+
+        TMQ.iCareWhatMsg(new SimpleTmqMsg("UnitTest", "1"));
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask(){
+            @Override
+            public void run() {
+                TMQ.report("UnitTest", "1");
             }
         }, ASYNC_TASK_TIMEOUT);
         TMQ.await(AWAIT_TIMEOUT);
