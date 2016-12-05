@@ -109,6 +109,24 @@ public class TMQ {
     }
 
     /**
+     * await通过后再等1s，继续收可能出现的预期之外的消息
+     * @return 成功通过匹配器检查 true，到超时时间还没通过 false
+     */
+    public static boolean awaitAndSleep() {
+        return tmqInstance.awaitAndSleep();
+    }
+
+    /**
+     * 等待被测系统发给TMQ的消息通过匹配器的检查，若通过检查则再睡眠指定时长
+     * @param timeout 超时时间，单位秒
+     * @param delay await后的睡眠时长，单位秒
+     * @return 成功通过匹配器检查 true，到超时时间还没通过 false
+     */
+    public static boolean awaitAndSleep(long timeout, long delay) {
+        return tmqInstance.awaitAndSleep(timeout, delay);
+    }
+
+    /**
      * 打印历史消息记录
      */
     public static void printHistory()

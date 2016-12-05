@@ -80,8 +80,26 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 		}
 
 		try {
-			countDownLatch.await(timeout, TimeUnit.SECONDS);
-			return true;
+			return countDownLatch.await(timeout, TimeUnit.SECONDS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean awaitAndSleep(long timeout, long delay) {
+		if (countDownLatch == null) {
+			return false;
+		}
+
+		try {
+			boolean ret = countDownLatch.await(timeout, TimeUnit.SECONDS);
+			if (ret)
+			{
+				TimeUnit.SECONDS.sleep(delay);
+			}
+			return ret;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

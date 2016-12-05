@@ -12,15 +12,15 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertTrue;
 
 /**
- * 严格模式和松散模式混合测试
+ * Created by yoyoqin on 2016/12/5.
  */
-public class MixedModeTest extends BaseTest {
+public class SleepAfterAwaitTest extends BaseTest {
     /**
-     * 在同一个测试用例中支持预期模式的切换
+     * 在同一个测试用例中切换预期模式，同时测试TMQ.awaitAndSleep接口是否生效
      * @throws Exception
      */
     @Test
-    public void testMixedMessage() throws Exception {
+    public void testSleepAfterAwait1() throws Exception {
         // 严格模式
         TMQ.iCareWhatMsg(new SimpleTmqMsg("UnitTest", "1"));
         Timer timer = new Timer();
@@ -30,7 +30,9 @@ public class MixedModeTest extends BaseTest {
                 TMQ.report("UnitTest", "1");
             }
         }, ASYNC_TASK_TIMEOUT);
-        TMQ.await(AWAIT_TIMEOUT);
+        long startTime1 = System.currentTimeMillis();
+        TMQ.awaitAndSleep(AWAIT_TIMEOUT, 5);
+        assertTrue(System.currentTimeMillis() - startTime1 > 5*1000);
         assertTrue(TMQ.check());
 
         // 切换到松散模式，不在乎顺序
@@ -48,7 +50,9 @@ public class MixedModeTest extends BaseTest {
                 TMQ.report("UnitTest", "2");
             }
         }, ASYNC_TASK_TIMEOUT);
-        TMQ.await(AWAIT_TIMEOUT);
+        long startTime2 = System.currentTimeMillis();
+        TMQ.awaitAndSleep(AWAIT_TIMEOUT, 5);
+        assertTrue(System.currentTimeMillis() - startTime1 > 5*1000);
         TimeUnit.SECONDS.sleep(WAIT_TIMEOUT);
         assertTrue(TMQ.check());
 
@@ -61,7 +65,8 @@ public class MixedModeTest extends BaseTest {
                 TMQ.report("UnitTest", "1");
             }
         }, ASYNC_TASK_TIMEOUT);
-        TMQ.await(AWAIT_TIMEOUT);
+        TMQ.awaitAndSleep(AWAIT_TIMEOUT, 5);
+        assertTrue(System.currentTimeMillis() - startTime1 > 5*1000);
         assertTrue(TMQ.check());
 
         // 切换到松散模式，不在乎顺序
@@ -79,7 +84,8 @@ public class MixedModeTest extends BaseTest {
                 TMQ.report("UnitTest", "2");
             }
         }, ASYNC_TASK_TIMEOUT);
-        TMQ.await(AWAIT_TIMEOUT);
+        TMQ.awaitAndSleep(AWAIT_TIMEOUT, 5);
+        assertTrue(System.currentTimeMillis() - startTime1 > 5*1000);
         TimeUnit.SECONDS.sleep(WAIT_TIMEOUT);
         assertTrue(TMQ.check());
     }

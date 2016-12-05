@@ -36,27 +36,32 @@ public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 				.switchFilter(FilterEnum.TYPE)
 				.switchExpectMode(ModeEnum.STRICT);
 	}
-	
+
+	@Override
 	public SimpleTMQ setExecuteController(IExecuteControllers<String, SimpleTmqMsg> controller)
 	{
 		this.controller = controller.getController();
 		return this;
 	}
-	
+
+	@Override
 	public SimpleTMQ switchFilter(IFilters<String, SimpleTmqMsg> filter) {
 		controller.switchFilter(filter);
 		return this;
 	}
 
+	@Override
 	public SimpleTMQ switchExpectMode(IExpectModes<String, SimpleTmqMsg> mode) {
 		controller.switchExpectMode(mode);
 		return this;
 	}
 
+	@Override
 	public boolean check(){
 		return controller.check();
 	}
 
+	@Override
 	public boolean report(String tag, Object msg) {
 		return controller.report(tag, msg);
 	}
@@ -104,6 +109,7 @@ public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 	 * @param msgTypes
 	 *            有效的消息类型
 	 */
+	@Override
 	public void iCareWhatType(String... msgTypes) {
 		for (String tag : msgTypes)
 		{
@@ -111,10 +117,12 @@ public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 		}
 	}
 
+	@Override
 	public void clearCaredType() {
 		controller.clearFilter();
 	}
 
+	@Override
 	public void reset() {
 		controller.reset(0);
 	}
@@ -123,19 +131,40 @@ public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 	 * await的同时要进行结果检查
 	 * @return
 	 */
+	@Override
 	public boolean await() {
 		return await(10);
 	}
 
+	@Override
 	public boolean await(long timeout) {
 		return controller.await(timeout);
 	}
-	
+
+	/**
+	 * await通过后再等1s，继续收可能出现的预期之外的消息
+	 * @return
+	 */
+	@Override
+	public boolean awaitAndSleep() {
+		return awaitAndSleep(10, 1);
+	}
+
+	/**
+	 * 待被测系统发给TMQ的消息通过匹配器的检查，若通过检查则再睡眠指定时长
+	 */
+	@Override
+	public boolean awaitAndSleep(long timeout, long delay) {
+		return controller.awaitAndSleep(timeout, delay);
+	}
+
+	@Override
 	public void setOutStream(OutputStream os)
 	{
 		controller.setOutInfo(os);
 	}
 
+	@Override
 	public void printHistory(String head, String foot) {
 		if (null != head) {
 			controller.print(head.concat(System.getProperty("line.separator")));
@@ -146,6 +175,7 @@ public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 		}
 	}
 
+	@Override
 	public void printText(String head, String foot, String text) {
 		if (null != head) {
 			controller.print(head.concat(System.getProperty("line.separator")));

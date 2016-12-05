@@ -88,6 +88,20 @@ public interface ITmq<T, M> {
     boolean await(long timeout);
 
     /**
+     * 等待被测系统发给TMQ的消息通过匹配器的检查，并在消息通过后多等待1s
+     * @return 成功通过匹配器检查 true，到10s还没通过 false
+     */
+    boolean awaitAndSleep();
+
+    /**
+     * 等待被测系统发给TMQ的消息通过匹配器的检查，并在消息通过后多等待指定的时长
+     * @param timeout 超时时间，单位秒
+     * @param delay await后的睡眠时长，单位秒
+     * @return 成功通过匹配器检查 true，到超时时间还没通过 false
+     */
+    boolean awaitAndSleep(long timeout, long delay);
+
+    /**
      * 在完成等待接收消息流程后，检查收到的消息是否与预期匹配
      * @return 匹配 true, 不匹配 false
      */
