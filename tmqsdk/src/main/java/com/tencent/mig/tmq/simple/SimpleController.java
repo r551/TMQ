@@ -148,15 +148,18 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 		String[] logs = logger.getHistory();
 		try {
 			// 注意换行用\r\n在PrintStream中是无效的
-			os.write("====pre Filter MsgQueue:====".getBytes());
+			os.write("====pre Filter MsgQueue====".getBytes());
+			os.write(System.getProperty("line.separator").getBytes());
 			os.write(logs[0].getBytes());
+
+			os.write("====after Filter MsgQueue====".getBytes());
 			os.write(System.getProperty("line.separator").getBytes());
-			os.write("====after Filter MsgQueue:====".getBytes());
 			os.write(logs[1].getBytes());
+
+			os.write("====checked MsgQueue====".getBytes());
 			os.write(System.getProperty("line.separator").getBytes());
-			os.write("====checked MsgQueue:====".getBytes());
 			os.write(logs[2].getBytes());
-			os.write(System.getProperty("line.separator").getBytes());
+
 			os.flush();
 		} catch (Exception e) {
 			e.printStackTrace();

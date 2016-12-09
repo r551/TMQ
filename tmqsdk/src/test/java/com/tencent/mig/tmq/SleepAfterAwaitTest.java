@@ -34,6 +34,7 @@ public class SleepAfterAwaitTest extends BaseTest {
         TMQ.awaitAndSleep(AWAIT_TIMEOUT, 5);
         assertTrue(System.currentTimeMillis() - startTime1 > 5*1000);
         assertTrue(TMQ.check());
+        TMQ.printHistory();
 
         // 切换到松散模式，不在乎顺序
         TMQ.switchExpectMode(ModeEnum.FLEXIBLE);
@@ -55,6 +56,7 @@ public class SleepAfterAwaitTest extends BaseTest {
         assertTrue(System.currentTimeMillis() - startTime1 > 5*1000);
         TimeUnit.SECONDS.sleep(WAIT_TIMEOUT);
         assertTrue(TMQ.check());
+        TMQ.printHistory();
 
         // 切换到严格模式
         TMQ.switchExpectMode(ModeEnum.STRICT);
@@ -68,6 +70,7 @@ public class SleepAfterAwaitTest extends BaseTest {
         TMQ.awaitAndSleep(AWAIT_TIMEOUT, 5);
         assertTrue(System.currentTimeMillis() - startTime1 > 5*1000);
         assertTrue(TMQ.check());
+        TMQ.printHistory();
 
         // 切换到松散模式，不在乎顺序
         TMQ.switchExpectMode(ModeEnum.FLEXIBLE);
@@ -88,5 +91,6 @@ public class SleepAfterAwaitTest extends BaseTest {
         assertTrue(System.currentTimeMillis() - startTime1 > 5*1000);
         TimeUnit.SECONDS.sleep(WAIT_TIMEOUT);
         assertTrue(TMQ.check());
+        TMQ.printHistory();
     }
 }

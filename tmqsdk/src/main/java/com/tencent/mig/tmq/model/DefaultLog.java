@@ -89,7 +89,7 @@ public class DefaultLog<T, M> implements ILogger<T, M> {
 		for (M s : msgQueue)
 		{
 			msgs.append(s);
-			preFilterMsgs.append(System.getProperty("line.separator"));
+			msgs.append(System.getProperty("line.separator"));
 		}
 		result[1] = msgs.toString();
 		
@@ -97,7 +97,7 @@ public class DefaultLog<T, M> implements ILogger<T, M> {
 		for (M s : checkedQueue)
 		{
 			checkedMsgs.append(s);
-			preFilterMsgs.append(System.getProperty("line.separator"));
+			checkedMsgs.append(System.getProperty("line.separator"));
 		}
 		result[2] = checkedMsgs.toString();
 		
