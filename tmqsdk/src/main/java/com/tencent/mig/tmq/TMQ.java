@@ -170,7 +170,7 @@ public class TMQ {
     /**
      * 设置验证环节的监听
      */
-    public static void setCheckListener(CheckListener listener) {
+    public static <M> void setCheckListener(CheckListener<M> listener) {
         tmqInstance.setCheckListener(listener);
     }
     //=========================================================================

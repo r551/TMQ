@@ -9,6 +9,7 @@ import com.tencent.mig.tmq.simple.SimpleTmqMsg;
 import org.junit.Test;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
@@ -37,10 +38,10 @@ public class CheckListenerTest extends BaseTest {
         }, ASYNC_TASK_TIMEOUT);
         TMQ.await();
         BlockingQueue<IRetCode> queue = new LinkedBlockingQueue();
-        TMQ.setCheckListener(new CheckListener() {
+        TMQ.setCheckListener(new CheckListener<SimpleTmqMsg>() {
             @Override
             public void onCheck(IRetCode retCode,
-                                Collection msgPreFilter, Collection msgAfterFilter, Collection msgChecked,
+                                List<SimpleTmqMsg> msgPreFilter, List<SimpleTmqMsg> msgAfterFilter, List<SimpleTmqMsg> msgChecked,
                                 String[] msgGroupArray) {
                 if (retCode == RetCode.SUCCESS)
                 {
@@ -72,10 +73,10 @@ public class CheckListenerTest extends BaseTest {
         }, ASYNC_TASK_TIMEOUT);
         TMQ.await();
         BlockingQueue<IRetCode> queue = new LinkedBlockingQueue();
-        TMQ.setCheckListener(new CheckListener() {
+        TMQ.setCheckListener(new CheckListener<SimpleTmqMsg>() {
             @Override
             public void onCheck(IRetCode retCode,
-                                Collection msgPreFilter, Collection msgAfterFilter, Collection msgChecked,
+                                List<SimpleTmqMsg> msgPreFilter, List<SimpleTmqMsg> msgAfterFilter, List<SimpleTmqMsg> msgChecked,
                                 String[] msgGroupArray) {
                 if (retCode == RetCode.SUCCESS)
                 {

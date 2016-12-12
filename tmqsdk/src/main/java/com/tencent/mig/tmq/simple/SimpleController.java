@@ -32,7 +32,7 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 	private ILogger<String, SimpleTmqMsg> logger;
 	private IExpectMode<String, SimpleTmqMsg> mode;
 	private IFilter<String, SimpleTmqMsg> filter;
-	private CheckListener checkListener;
+	private CheckListener<SimpleTmqMsg> checkListener;
 	private CountDownLatch countDownLatch = null;
 
 	/*
