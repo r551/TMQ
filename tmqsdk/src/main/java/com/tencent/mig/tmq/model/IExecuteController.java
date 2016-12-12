@@ -106,8 +106,15 @@ public interface IExecuteController<T, M> {
 	 * @param flag 输出控制开关，输出 true，不输出 false
 	 */
 	void setOutFlag(boolean flag);
+
 	/**
 	 * 向已设置的输出流打印用例执行过程中记录的消息情况
+	 * ====pre Filter MsgQueue====
+	 * UnitTest-1
+	 * ====after Filter MsgQueue====
+	 * UnitTest-1
+	 * ====checked MsgQueue====
+	 * UnitTest-1
 	 */
 	void print();
 
@@ -117,4 +124,8 @@ public interface IExecuteController<T, M> {
 	 */
 	void print(String text);
 
+	/**
+	 * 设置验证环节的监听
+	 */
+	void setCheckListener(CheckListener listener);
 }

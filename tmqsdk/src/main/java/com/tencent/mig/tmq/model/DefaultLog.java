@@ -37,7 +37,7 @@ public class DefaultLog<T, M> implements ILogger<T, M> {
 	protected List<M> msgQueue = new ArrayList<>();
 
 	// 通过校验的消息序列
-	protected Queue<M> checkedQueue = new LinkedList<>();
+	protected List<M> checkedQueue = new LinkedList<>();
 
 	@Override
 	public boolean append(M msg) {
@@ -120,7 +120,7 @@ public class DefaultLog<T, M> implements ILogger<T, M> {
 	}
 
 	@Override
-	public Queue<M> getCheckedQueue() {
+	public List<M> getCheckedQueue() {
 		return checkedQueue;
 	}
 }

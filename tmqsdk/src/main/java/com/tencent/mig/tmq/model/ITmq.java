@@ -128,6 +128,10 @@ public interface ITmq<T, M> {
      */
     void printText(String head, String foot, String text);
 
+    /**
+     * 设置验证环节的监听
+     */
+    void setCheckListener(CheckListener listener);
     //=========================================================================
     /**
      * 设置临时消息，方便异步生成的需要在用例层使用的对象。

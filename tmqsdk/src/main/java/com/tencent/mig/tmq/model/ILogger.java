@@ -53,7 +53,7 @@ public interface ILogger<T, M> {
 	 * 获取校验通过的消息队列
 	 * @return
 	 */
-	Queue<M> getCheckedQueue();
+	List<M> getCheckedQueue();
 
 	/**
 	 * 清空已记录的消息日志

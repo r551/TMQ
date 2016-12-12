@@ -13,6 +13,7 @@
  */
 package com.tencent.mig.tmq.simple;
 
+import com.tencent.mig.tmq.model.CheckListener;
 import com.tencent.mig.tmq.model.IExclusiveFlag;
 import com.tencent.mig.tmq.model.IExecuteController;
 import com.tencent.mig.tmq.model.IExecuteControllers;
@@ -186,6 +187,11 @@ public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 		if (null != foot) {
 			controller.print(foot.concat(System.getProperty("line.separator")));
 		}
+	}
+
+	@Override
+	public void setCheckListener(CheckListener listener) {
+		controller.setCheckListener(listener);
 	}
 
 	//=========================================================================

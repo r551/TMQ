@@ -13,6 +13,7 @@
  */
 package com.tencent.mig.tmq;
 
+import com.tencent.mig.tmq.model.CheckListener;
 import com.tencent.mig.tmq.model.IExpectModes;
 import com.tencent.mig.tmq.model.IFilters;
 import com.tencent.mig.tmq.model.ITmq;
@@ -31,6 +32,12 @@ public class TMQ {
         tmqInstance = tmq;
     }
 
+    /**
+     * 被测代码中调用report方法，将消息发给TMQ测试框架
+     * @param tag 消息标签
+     * @param msg 消息内容，TMQ框架不持有msg对象，不会造成内存泄露
+     * @return 消息上报是否成功，目前全部返回true
+     */
     public static <T, M> boolean report(T tag, M msg) {
        return tmqInstance.report(tag.toString(), msg);
     }
@@ -160,6 +167,12 @@ public class TMQ {
         tmqInstance.setOutStream(os);
     }
 
+    /**
+     * 设置验证环节的监听
+     */
+    public static void setCheckListener(CheckListener listener) {
+        tmqInstance.setCheckListener(listener);
+    }
     //=========================================================================
     /**
      * 设置临时消息，方便异步生成的需要在用例层使用的对象。

@@ -13,6 +13,7 @@
  */
 package com.tencent.mig.tmq.simple;
 
+import com.tencent.mig.tmq.model.CheckListener;
 import com.tencent.mig.tmq.model.DefaultLog;
 import com.tencent.mig.tmq.model.IExecuteController;
 import com.tencent.mig.tmq.model.IExpectMode;
@@ -31,6 +32,7 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 	private ILogger<String, SimpleTmqMsg> logger;
 	private IExpectMode<String, SimpleTmqMsg> mode;
 	private IFilter<String, SimpleTmqMsg> filter;
+	private CheckListener checkListener;
 	private CountDownLatch countDownLatch = null;
 
 	/*
@@ -114,6 +116,14 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 			print(result.getDesc() + System.getProperty("line.separator"));
 		} else if (result != RetCode.SUCCESS) {
 			print(result.getDesc() + System.getProperty("line.separator"));
+		}
+
+		if (null != checkListener)
+		{
+			String[] logs = logger.getHistory();
+			checkListener.onCheck(result,
+					logger.getPreFilterQueue(), logger.getAfterFilterQueue(), logger.getCheckedQueue(),
+					logs);
 		}
 
 		return result == RetCode.SUCCESS;
@@ -220,5 +230,10 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 		state = false;
 		clear();
 		countDownLatch = new CountDownLatch(countInit);
+	}
+
+	@Override
+	public void setCheckListener(CheckListener listener) {
+		this.checkListener = listener;
 	}
 }

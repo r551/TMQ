@@ -39,7 +39,7 @@ public class SimpleStrictMode<T, M> extends DefaultStrictMode<T, M> {
 			return RetCode.SIZE_OF_MSG_QUEUE_AND_EXPECTED_QUEUE_NOT_EQUALS;
 		}
 		for (int i = 0; i < logger.getCheckedQueue().size(); i++) {
-			if (!logger.getAfterFilterQueue().get(i).equals(logger.getCheckedQueue().poll())) {
+			if (!logger.getAfterFilterQueue().get(i).equals(logger.getCheckedQueue().get(i))) {
 				return RetCode.MSG_QUEUE_NOT_MATCHED_EXPECT_EDQUEUE;
 			}
 		}
