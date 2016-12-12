@@ -55,4 +55,43 @@ public class CheckListenerTest extends BaseTest {
         IRetCode retCode = queue.poll();
         assertTrue(retCode != null);
     }
+
+    /**
+     * 验证check失败时的监听
+     * @throws Exception
+     */
+    @Test
+    public void testCheckListenerFail() throws Exception {
+        TMQ.iCareWhatMsg(new SimpleTmqMsg("UnitTest", "1"));
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask(){
+            @Override
+            public void run() {
+                TMQ.report("UnitTest", "2");
+            }
+        }, ASYNC_TASK_TIMEOUT);
+        TMQ.await();
+        BlockingQueue<IRetCode> queue = new LinkedBlockingQueue();
+        TMQ.setCheckListener(new CheckListener() {
+            @Override
+            public void onCheck(IRetCode retCode,
+                                Collection msgPreFilter, Collection msgAfterFilter, Collection msgChecked,
+                                String[] msgGroupArray) {
+                if (retCode == RetCode.SUCCESS)
+                {
+                    queue.offer(retCode);
+                }
+                else
+                {
+                    queue.offer(retCode);
+                }
+                TMQ.printText(msgGroupArray[0]);
+                TMQ.printText(msgGroupArray[1]);
+                TMQ.printText(msgGroupArray[2]);
+            }
+        });
+        assertTrue(!TMQ.check());
+        IRetCode retCode = queue.poll();
+        assertTrue(retCode != null);
+    }
 }
