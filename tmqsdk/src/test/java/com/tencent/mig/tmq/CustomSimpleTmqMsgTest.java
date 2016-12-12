@@ -46,11 +46,16 @@ public class CustomSimpleTmqMsgTest extends BaseTest {
             public void onCheck(IRetCode retCode,
                                 List<SimpleTmqMsg> msgPreFilter, List<SimpleTmqMsg> msgAfterFilter, List<SimpleTmqMsg> msgChecked,
                                 String[] msgGroupArray) {
-                long costTime = ((CustomSimpleTmqMsg)msgChecked.toArray()[0]).costTime;
-                assertTrue(costTime == 5000);
+                SimpleTmqMsg sm = msgChecked.get(0);
+                if (sm instanceof CustomSimpleTmqMsg)
+                {
+                    long costTime = ((CustomSimpleTmqMsg)sm).costTime;
+                    assertTrue(costTime == 5000);
+                }
             }
         });
         assertTrue(TMQ.check());
+        TMQ.setCheckListener(null);
     }
 
     class CustomSimpleTmqMsg extends SimpleTmqMsg {

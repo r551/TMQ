@@ -55,6 +55,7 @@ public class CheckListenerTest extends BaseTest {
         assertTrue(TMQ.check());
         IRetCode retCode = queue.poll();
         assertTrue(retCode != null);
+        TMQ.setCheckListener(null);
     }
 
     /**
@@ -94,5 +95,6 @@ public class CheckListenerTest extends BaseTest {
         assertTrue(!TMQ.check());
         IRetCode retCode = queue.poll();
         assertTrue(retCode != null);
+        TMQ.setCheckListener(null);
     }
 }
