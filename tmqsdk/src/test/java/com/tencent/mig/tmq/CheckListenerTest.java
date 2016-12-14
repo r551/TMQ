@@ -97,4 +97,78 @@ public class CheckListenerTest extends BaseTest {
         assertTrue(retCode != null);
         TMQ.setCheckListener(null);
     }
+
+    /**
+     * 验证check失败时的监听，未通过验证的消息，严格模式
+     * @throws Exception
+     */
+    @Test
+    public void testCheckListenerUnHit() throws Exception {
+        TMQ.switchExpectMode(ModeEnum.FLEXIBLE);
+        TMQ.iCareWhatMsg(new SimpleTmqMsg("UnitTest", "1"));
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask(){
+            @Override
+            public void run() {
+                TMQ.report("UnitTest", "2");
+            }
+        }, ASYNC_TASK_TIMEOUT);
+        TMQ.await();
+        BlockingQueue<String> queue = new LinkedBlockingQueue();
+        TMQ.setCheckListener(new CheckListener<SimpleTmqMsg>() {
+            @Override
+            public void onCheck(IRetCode retCode,
+                                List<SimpleTmqMsg> msgPreFilter, List<SimpleTmqMsg> msgAfterFilter, List<SimpleTmqMsg> msgChecked,
+                                String[] msgGroupArray) {
+                TMQ.printText(msgGroupArray[0]);
+                TMQ.printText(msgGroupArray[1]);
+                TMQ.printText(msgGroupArray[2]);
+                // 未命中的消息
+                TMQ.printText(msgGroupArray[3]);
+
+                queue.offer(msgGroupArray[3]);
+            }
+        });
+        assertTrue(!TMQ.check());
+        String missedMsg = queue.poll();
+        assertTrue(missedMsg.contains("1")); // 未命中的消息是消息1
+        TMQ.setCheckListener(null);
+    }
+
+    /**
+     * 验证check失败时的监听，未通过验证的消息，松散模式
+     * @throws Exception
+     */
+    @Test
+    public void testCheckListenerUnHitFlexible() throws Exception {
+        TMQ.switchExpectMode(ModeEnum.FLEXIBLE);
+        TMQ.iCareWhatMsg(new SimpleTmqMsg("UnitTest", "1"));
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask(){
+            @Override
+            public void run() {
+                TMQ.report("UnitTest", "2");
+            }
+        }, ASYNC_TASK_TIMEOUT);
+        TMQ.await();
+        BlockingQueue<String> queue = new LinkedBlockingQueue();
+        TMQ.setCheckListener(new CheckListener<SimpleTmqMsg>() {
+            @Override
+            public void onCheck(IRetCode retCode,
+                                List<SimpleTmqMsg> msgPreFilter, List<SimpleTmqMsg> msgAfterFilter, List<SimpleTmqMsg> msgChecked,
+                                String[] msgGroupArray) {
+                TMQ.printText(msgGroupArray[0]);
+                TMQ.printText(msgGroupArray[1]);
+                TMQ.printText(msgGroupArray[2]);
+                // 未命中的消息
+                TMQ.printText(msgGroupArray[3]);
+
+                queue.offer(msgGroupArray[3]);
+            }
+        });
+        assertTrue(!TMQ.check());
+        String missedMsg = queue.poll();
+        assertTrue(missedMsg.contains("1")); // 未命中的消息是消息1
+        TMQ.setCheckListener(null);
+    }
 }

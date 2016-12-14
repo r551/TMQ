@@ -25,6 +25,7 @@ import com.tencent.mig.tmq.model.IRetCode;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -120,10 +121,28 @@ public class SimpleController implements IExecuteController<String, SimpleTmqMsg
 
 		if (null != checkListener)
 		{
+			// 为了方便消息多时的问题定位，将未命中的消息也加入回调
 			String[] logs = logger.getHistory();
+			String[] strongLogs = new String[4];
+			strongLogs[0] = logs[0];
+			strongLogs[1] = logs[1];
+			strongLogs[2] = logs[2];
+			strongLogs[3] = "";
+			List<SimpleTmqMsg> uncheckedMsgList = mode.getUnHitMsgList();
+			if (null != uncheckedMsgList && !uncheckedMsgList.isEmpty())
+			{
+				StringBuilder uncheckedMsg = new StringBuilder();
+				for (SimpleTmqMsg sm : uncheckedMsgList)
+				{
+					uncheckedMsg.append(sm);
+					uncheckedMsg.append(System.getProperty("line.separator"));
+				}
+				strongLogs[3] = uncheckedMsg.toString();
+			}
+
 			checkListener.onCheck(result,
 					logger.getPreFilterQueue(), logger.getAfterFilterQueue(), logger.getCheckedQueue(),
-					logs);
+					strongLogs);
 		}
 
 		return result == RetCode.SUCCESS;

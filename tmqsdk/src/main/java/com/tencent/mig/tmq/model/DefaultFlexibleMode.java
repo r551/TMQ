@@ -13,7 +13,9 @@
  */
 package com.tencent.mig.tmq.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -102,5 +104,19 @@ public abstract class DefaultFlexibleMode<T, M> implements IExpectMode<T, M> {
 
 	public int getCountWhenCompleteKeyMatch() {
 		return countWhenCompleteKeyMatch;
+	}
+
+	@Override
+	public List<M> getUnHitMsgList()
+	{
+		ArrayList<M> ret = new ArrayList<M>();
+		for (Map.Entry<M, AtomicInteger> entry : expectedMap.entrySet())
+		{
+			if (entry.getValue().get() > 0)
+			{
+				ret.add(entry.getKey());
+			}
+		}
+		return ret;
 	}
 }

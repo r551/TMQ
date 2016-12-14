@@ -13,6 +13,10 @@
  */
 package com.tencent.mig.tmq.model;
 
+import com.tencent.mig.tmq.simple.SimpleTmqMsg;
+
+import java.util.List;
+
 /**
  * 匹配模式
  * @author yoyoqin, kaihuancao
@@ -64,4 +68,9 @@ public interface IExpectMode<T, M> {
 	 * @return true 匹配 false 未匹配过
      */
 	boolean check(M msg);
+
+	/**
+	 * 获取当前尚未命中的预期消息列表
+	 */
+	List<M> getUnHitMsgList();
 }

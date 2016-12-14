@@ -13,7 +13,9 @@
  */
 package com.tencent.mig.tmq.model;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -24,7 +26,7 @@ import java.util.Queue;
  * @param <M> 消息类型
  */
 public abstract class DefaultStrictMode<T, M> implements IExpectMode<T, M> {
-	// 预期消息序列
+	// 预期消息序列，会随着match的进行不断缩小
 	protected Queue<M> expectedQueue = new LinkedList<>();
 
 	@Override
@@ -61,5 +63,11 @@ public abstract class DefaultStrictMode<T, M> implements IExpectMode<T, M> {
 
 	public int getCountWhenCompleteKeyMatch() {
 		return expectedQueue.size();
+	}
+
+	@Override
+	public List<M> getUnHitMsgList()
+	{
+		return new ArrayList<M>(expectedQueue);
 	}
 }
