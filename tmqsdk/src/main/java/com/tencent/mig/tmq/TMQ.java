@@ -72,6 +72,7 @@ public class TMQ {
 
     /**
      * 重置TMQ框架状态，会将预设的关注消息序列、预设的有效消息标签和当前用例已记录的消息列表都清空
+     * 建议每个用例的teardown时机主动执行reset，这样相比下个用例启动后内置调用reset时机更安全
      */
     public static void reset() {
         tmqInstance.reset();

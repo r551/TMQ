@@ -86,7 +86,7 @@ public class SimpleTMQ implements ITmq<String, SimpleTmqMsg>  {
 
 		boolean hasExclusiveMsg = false;
 		int indexBeforeExclusiveFlag = 0;
-		for (indexBeforeExclusiveFlag = 0; indexBeforeExclusiveFlag < tmqMsgList.length; indexBeforeExclusiveFlag++)
+		for (; indexBeforeExclusiveFlag < tmqMsgList.length; indexBeforeExclusiveFlag++)
 		{
 			SimpleTmqMsg msg = tmqMsgList[indexBeforeExclusiveFlag];
 			if (msg == null || msg instanceof IExclusiveFlag)
