@@ -3,7 +3,44 @@
 TMQ是用于测试进度控制的组件，主要用于在被测代码中埋点，输出能够标识被测系统关键状态的信息；在测试代码中接收到被测代码输出的关键状态信息，通过不同的检查策略的切换，灵活的判断测试用例是否执行通过。  
 TMQ是从腾讯MIG移动端测试经验中总结出的简洁、有效、高可扩展性的通用组件，广泛的用于增强了检查点的 Android UI自动化项目。
 #### 当前版本
-v0.2.9
+v0.3：<br>
+扩展了一类弱校验消息，消息只凭tag做为标识。详细使用见测试类WeakMessageTest，举例如下：
+```java
+/**
+ * 模拟测试验证网络请求消息的可能场景，固定收1条请求消息和1条响应消息。
+ */
+@Test
+public void testBinaryMessage() throws Exception {
+    // 固定收2条消息，一条代表poi搜索的请求，一条代表poi搜索的响应
+    TMQ.iCareWhatMsg(new WeakTmqMsg("JceMessage_poi_req", new Date())
+            , new WeakTmqMsg("JceMessage_poi_res", new Date()));
+    Timer timer = new Timer();
+    timer.schedule(new TimerTask(){
+        @Override
+        public void run() {
+            // 模拟被测代码，上报代表请求的消息
+            TMQ.report("JceMessage_poi_req", new Date());
+            // 模拟被测代码，上报代表响应的消息
+            TMQ.report("JceMessage_poi_res", new Date());
+        }
+    }, ASYNC_TASK_TIMEOUT);
+    TMQ.await(AWAIT_TIMEOUT);
+
+    TMQ.setCheckListener(new CheckListener<WeakTmqMsg>() {
+        @Override
+        public void onCheck(IRetCode retCode,
+                            List<WeakTmqMsg> msgPreFilter, List<WeakTmqMsg> msgAfterFilter, List<WeakTmqMsg> msgChecked,
+                            String[] msgGroupArray) {
+            tempList.addAll(msgChecked);
+        }
+    });
+    // 基本的收全了req和res消息的校验
+    assertTrue(TMQ.check());
+    // 可以从临时列表中取出待校验消息进行进一步校验了
+    assertEquals(tempList.get(0), new WeakTmqMsg("JceMessage_poi_req", new Date()));
+    assertEquals(tempList.get(1), new WeakTmqMsg("JceMessage_poi_res", new Date()));
+}
+```
 #### 模块介绍
 ##### tmqsdk
 TMQ的主框架，默认采用严格校验模式的消息检查方案，使用者可以在不修改框架代码的情况下，新增自定义的消息检查模块，符合开闭原则。
@@ -19,8 +56,8 @@ dependencies {
      * 所以这里配置为release版本编译方式为编译依赖但打包不包含的releaseProvided，
      * 为了在release版本编译时不出错，请在被测代码中调用TMQ的地方用if (BuildConfig.DEBUG)语句包裹
      */
-    debugCompile 'com.tencent.mig.tmq:tmqsdk:0.2.9'
-    releaseProvided  'com.tencent.mig.tmq:tmqsdk:0.2.9'
+    debugCompile 'com.tencent.mig.tmq:tmqsdk:0.3'
+    releaseProvided  'com.tencent.mig.tmq:tmqsdk:0.3'
 }
 ```
 ##### DEMO
