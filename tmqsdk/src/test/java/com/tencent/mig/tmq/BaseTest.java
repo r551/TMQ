@@ -9,7 +9,7 @@ import org.junit.rules.TestName;
  * 测试父类
  */
 public class BaseTest {
-    public static int ASYNC_TASK_TIMEOUT = 1000; // milliseconds
+    public static int ASYNC_TASK_TIMEOUT = 100; // milliseconds
     public static int AWAIT_TIMEOUT = 3; // seconds
     public static int WAIT_TIMEOUT = 3; // seconds
 

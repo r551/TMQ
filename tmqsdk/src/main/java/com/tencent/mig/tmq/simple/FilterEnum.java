@@ -16,18 +16,18 @@ package com.tencent.mig.tmq.simple;
 import com.tencent.mig.tmq.model.IFilter;
 import com.tencent.mig.tmq.model.IFilters;
 
-public enum FilterEnum implements IFilters<String, SimpleTmqMsg> {
+public enum FilterEnum implements IFilters {
 	TYPE(new SimpleTypeFilter()),
 	;
 
-	private IFilter<String, SimpleTmqMsg> filter;
+	private IFilter filter;
 
-	private FilterEnum(IFilter<String, SimpleTmqMsg> filter) {
+	private FilterEnum(IFilter filter) {
 		this.filter = filter;
 	}
 
 	@Override
-	public IFilter<String, SimpleTmqMsg> getFilter() {
+	public IFilter getFilter() {
 		return filter;
 	}
 

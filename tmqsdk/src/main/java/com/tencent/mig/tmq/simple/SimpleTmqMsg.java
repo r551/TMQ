@@ -20,8 +20,7 @@ import com.tencent.mig.tmq.model.IRetCode;
 
 import java.util.List;
 
-public class SimpleTmqMsg {
-	String tag;
+public class SimpleTmqMsg extends TagTmqMsg {
 	String msg;
 
 	public SimpleTmqMsg(String tag, String msg) {

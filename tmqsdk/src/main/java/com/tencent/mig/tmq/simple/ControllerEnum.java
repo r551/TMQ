@@ -15,20 +15,22 @@ package com.tencent.mig.tmq.simple;
 
 import com.tencent.mig.tmq.model.IExecuteController;
 import com.tencent.mig.tmq.model.IExecuteControllers;
+import com.tencent.mig.tmq.weak.WeakController;
 
-public enum ControllerEnum implements IExecuteControllers<String, SimpleTmqMsg> {
+public enum ControllerEnum implements IExecuteControllers {
 	SIMPLE(new SimpleController()),
+	WEAK(new WeakController())
 	;
 
-	private IExecuteController<String, SimpleTmqMsg> controller;
+	private IExecuteController controller;
 	
-	private ControllerEnum(IExecuteController<String, SimpleTmqMsg> controller)
+	private ControllerEnum(IExecuteController controller)
 	{
 		this.controller = controller;
 	}
 	
 	@Override
-	public IExecuteController<String, SimpleTmqMsg> getController() {
+	public IExecuteController getController() {
 		return controller;
 	}
 

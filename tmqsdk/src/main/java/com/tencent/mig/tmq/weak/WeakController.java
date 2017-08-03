@@ -11,13 +11,14 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.tencent.mig.tmq.simple;
+package com.tencent.mig.tmq.weak;
 
 import com.tencent.mig.tmq.abs.AbstractController;
+import com.tencent.mig.tmq.simple.SimpleTmqMsg;
 
-public class SimpleController extends AbstractController<SimpleTmqMsg> {
+public class WeakController extends AbstractController<Object> {
 
-	public SimpleController()
+	public WeakController()
 	{
 		super();
 	}
@@ -33,8 +34,9 @@ public class SimpleController extends AbstractController<SimpleTmqMsg> {
 				return true;
 			}
 
-			SimpleTmqMsg tmqMsg = msg instanceof SimpleTmqMsg ? (SimpleTmqMsg) msg : new SimpleTmqMsg(tag, msg.toString());
+			WeakTmqMsg tmqMsg = msg instanceof WeakTmqMsg ? (WeakTmqMsg) msg : new WeakTmqMsg(tag, msg);
 
+			// 弱类型消息模式下，消息类型都是WeakTmqMsg，消息体都是Object
 			if (logger.append(tmqMsg) && mode.match(tmqMsg)) {
 				logger.appendCheckedMsg(tmqMsg);
 
@@ -49,8 +51,9 @@ public class SimpleController extends AbstractController<SimpleTmqMsg> {
 	}
 
 	@Override
-	public void willCare(SimpleTmqMsg msg) {
+	public void willCare(Object msg) {
 		state = true;
+		// FIXME weak消息中继续借用SimpleTmqMsg.NULL做排他逻辑
 		if (null == msg || msg.equals(SimpleTmqMsg.NULL))
 		{
 			// 加入NULL消息后，按照严格匹配模式自然任何消息都不会和这条消息匹配上，就会判定不通过

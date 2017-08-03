@@ -11,25 +11,27 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.tencent.mig.tmq.simple;
+package com.tencent.mig.tmq.weak;
 
-import com.tencent.mig.tmq.model.IExpectMode;
-import com.tencent.mig.tmq.model.IExpectModes;
+import com.tencent.mig.tmq.model.IExecuteController;
+import com.tencent.mig.tmq.model.IExecuteControllers;
+import com.tencent.mig.tmq.simple.SimpleController;
+import com.tencent.mig.tmq.simple.SimpleTmqMsg;
 
-public enum ModeEnum implements IExpectModes {
-	STRICT(new SimpleStrictMode()),
-	FLEXIBLE(new SimpleFlexibleMode()),
+public enum WeakControllerEnum implements IExecuteControllers<String, Object> {
+	WEAK(new WeakController()),
 	;
 
-	private IExpectMode mode;
-	
-	private ModeEnum(IExpectMode mode)
+	private IExecuteController<String, Object> controller;
+
+	private WeakControllerEnum(IExecuteController<String, Object> controller)
 	{
-		this.mode = mode;
+		this.controller = controller;
 	}
 	
 	@Override
-	public IExpectMode getMode() {
-		return this.mode;
+	public IExecuteController<String, Object> getController() {
+		return controller;
 	}
+
 }

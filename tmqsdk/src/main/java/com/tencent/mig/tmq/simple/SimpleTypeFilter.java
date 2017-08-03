@@ -18,9 +18,9 @@ import com.tencent.mig.tmq.model.DefaultFilter;
 /**
  * Created by yoyoqin on 2016/8/21.
  */
-public class SimpleTypeFilter<T> extends DefaultFilter<T, SimpleTmqMsg> {
+public class SimpleTypeFilter<T> extends DefaultFilter<T, TagTmqMsg> {
     @Override
-    public boolean validate(SimpleTmqMsg msg) {
+    public boolean validate(TagTmqMsg msg) {
         if (msg == null || msg.tag == null)
             return false;
 
