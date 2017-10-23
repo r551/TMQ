@@ -15,6 +15,15 @@ public class WeakTmqMsg extends TagTmqMsg {
         this.tag = tag;
         this.msg = msg;
     }
+
+    public Object getMsg() {
+        return msg;
+    }
+
+    public void setMsg(Object msg) {
+        this.msg = msg;
+    }
+
     @Override
     public String toString() {
         return tag + "-" + msg.toString();

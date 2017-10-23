@@ -318,6 +318,8 @@ public class WeakMessageTest extends BaseTest {
         // 可以从临时列表中取出待校验消息进行进一步校验了
         assertEquals(tempList.get(0), new WeakTmqMsg("JceMessage_poi_req", new Date()));
         assertEquals(tempList.get(1), new WeakTmqMsg("JceMessage_poi_res", new Date()));
+        Object data1 = ((WeakTmqMsg)tempList.get(0)).getMsg();
+        assertTrue(data1 instanceof Date);
     }
 
     /**
